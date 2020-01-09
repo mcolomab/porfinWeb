@@ -5,9 +5,12 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <link rel="stylesheet" href="assets/css/main.min.css" />
+  <script src="https://unpkg.com/react@16/umd/react.development.js"></script>
+  <script src="https://unpkg.com/react-dom@16/umd/react-dom.development.js"></script>
+  <script src="https://unpkg.com/babel-standalone@6.26.0/babel.js"></script>
 </head>
 <body>
-  <section id="homeHeader">
+  <section id="header">
     <div class="wrapper">
       <nav>
         <ul id="mainNavigation" class="main-nav">
@@ -25,8 +28,8 @@
             </a>
           </li>
           <div id="responsive-nav" class="responsive-nav">
-            <li><a href="#">inicio</a></li>
-            <li><a href="products.html">productos</a></li>
+            <li><a href="index.html">inicio</a></li>
+            <li><a href="#">productos</a></li>
             <li><a href="contact.html">contacto</a></li>
           </div>
           <li class="nav-toggle">
@@ -36,81 +39,10 @@
           </li>
         </ul>
       </nav>
-      <article>
-        <h1>Productos de Limpieza</h1>
-        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
-      </article>
     </div>
   </section>
 
-  <section id="brands">
-    <div class="wrapper">
-      <ul>
-        <li>
-          <img src="assets/img/brand1.png" alt="Brands we work with">
-        </li>
-        <li>
-          <img src="assets/img/brand2.png" alt="Brands we work with">
-        </li>
-        <li>
-          <img src="assets/img/brand3.png" alt="Brands we work with">
-        </li>
-        <li>
-          <img src="assets/img/brand4.png" alt="Brands we work with">
-        </li>
-      </ul>
-    </div>
-  </section>
-
-  <section id="features">
-    <div class="wrapper">
-      <h2>Features that rock</h2>
-      <div class="cards">
-        <div class="feature-card car">
-          <img src="assets/img/icon-car.svg" alt="">
-          <h3>Main Headline</h3>
-          <p>Reiciendis at id provident animi. Ad consectetur perferendis quas, fugit, vel nesciunt nam!</p>
-        </div>
-        <div class="feature-card shoe">
-          <img src="assets/img/icon-shoe.svg" alt="">
-          <h3>Main Headline</h3>
-          <p>Rolestias molestiae doloremque, vero unde ea aut necessitatibus</p>
-        </div>
-        <div class="feature-card device">
-          <img src="assets/img/icon-phone.svg" alt="">
-          <h3>Main Headline</h3>
-          <p>Rolestias molestiae doloremque, vero unde ea aut necessitatibus</p>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <section id="discount">
-    <div class="wrapper">
-      <div class="discountLayout">
-        <picture>
-          <source media="(min-width: 681px)" srcset="assets/img/twoPhones.png">
-          <source media="(max-width: 680px)" srcset="assets/img/twoPhones-small.png">
-          <img src='assets/img/twoPhones.png'>
-        </picture>
-        <div class="offer">
-          <h2>Don't miss this offer</h2>
-          <p>Business cards represent not only your business, but it also tells people your professionalism in the industry.
-            In the business world today, the usage of business cards is far beyond just informing people who you are.</p>
-          <a href="#" class="button">50% off</a>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <section id="download">
-    <div class="wrapper">
-      <h2>Download anywhere</h2>
-      <p>How To Write Better Advertising CopyHow To Write Better Advertising CopyHow To Write Better Advertising Copy</p>
-      <a href="#" class="button apple">App Store</a>
-      <a href="#" class="button google">Play Store</a>
-    </div>
-  </section>
+  <section id="products"></section>
 
   <section id="footer">
     <div class="wrapper">
@@ -125,7 +57,329 @@
     </div>
   </section>
 
-  <script src="./assets/js/vendors.js"></script>
-  <script src="./assets/js/app.js"></script>
+  <script type="text/babel">
+    const OPTIONS = ["Hogar", "Calzado", "Cómputo", "Autos"];
+
+    const Checkbox = ({ label, isSelected, onCheckboxChange }) => (
+      <div className="category-item">
+        <label htmlFor={label}>{label}</label>
+        <input
+          type="checkbox"
+          id={label}
+          name={label}
+          checked={isSelected}
+          onChange={onCheckboxChange}
+        />
+      </div>
+    );
+
+    class Products extends React.Component {
+      render() {
+        const { checkboxes, selectedOption, products } = this.props.state
+        let productArray = []
+        if (selectedOption != "all") {
+          Object.keys(checkboxes)
+            .filter(checkbox => checkboxes[checkbox])
+            .forEach(checkbox => {
+              products
+                .filter( product => product.category == checkbox )
+                .forEach( product => productArray.push(product))
+            })
+        } else {
+          productArray = [...products]
+        }
+        return <p>{JSON.stringify(productArray)}</p>
+      }
+    }
+
+    class App extends React.Component {
+      state = {
+        checkboxes: OPTIONS.reduce(
+          (options, option) => ({
+            ...options,
+            [option]: false
+          }),
+          {}
+        ),
+        selectedOption: "all",
+        products: [
+          {
+            category: "Cómputo",
+            name: "Compucleaner",
+            description: "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Excepturi dolor dolorum optio deserunt sed, ratione quas dicta vero.",
+            image: "",
+            presentations: ["200 GR"]
+          },
+          {
+            category: "Cómputo",
+            name: "Compucleaner II",
+            description: "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Excepturi dolor dolorum optio deserunt sed, ratione quas dicta vero.",
+            image: "",
+            presentations: ["200 GR"]
+          },
+          {
+            category: "Cómputo",
+            name: "Compucleaner atomizador",
+            description: "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Excepturi dolor dolorum optio deserunt sed, ratione quas dicta vero.",
+            image: "",
+            presentations: ["250 ml", "Galón"]
+          },
+          {
+            category: "Cómputo",
+            name: "Paños compucleaner",
+            description: "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Excepturi dolor dolorum optio deserunt sed, ratione quas dicta vero.",
+            image: "",
+            presentations: ["30 UND"]
+          },
+          {
+            category: "Cómputo",
+            name: "Compusilicon atomizador",
+            description: "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Excepturi dolor dolorum optio deserunt sed, ratione quas dicta vero.",
+            image: "",
+            presentations: ["250 ml"]
+          },
+          {
+            category: "Cómputo",
+            name: "Monitor cleaner",
+            description: "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Excepturi dolor dolorum optio deserunt sed, ratione quas dicta vero.",
+            image: "",
+            presentations: ["250 ML", "500 ML", "900 ML", "Galón"]
+          },
+          {
+            category: "Cómputo",
+            name: "Alcohol isopropílico",
+            description: "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Excepturi dolor dolorum optio deserunt sed, ratione quas dicta vero.",
+            image: "",
+            presentations: ["650 ML", "Galón"]
+          },
+          {
+            category: "Cómputo",
+            name: "Kit computo",
+            description: "Compucleaner II + Compusilicon atomizador",
+            image: "",
+            presentations: ["Mix UND"]
+          },
+          {
+            category: "Autos",
+            name: "Silicona autos",
+            description: "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Excepturi dolor dolorum optio deserunt sed, ratione quas dicta vero.",
+            image: "",
+            presentations: ["250 ML", "Galón"]
+          },
+          {
+            category: "Autos",
+            name: "Silicona llantas",
+            description: "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Excepturi dolor dolorum optio deserunt sed, ratione quas dicta vero.",
+            image: "",
+            presentations: ["250 ML", "Galón"]
+          },
+          {
+            category: "Autos",
+            name: "Paños autos",
+            description: "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Excepturi dolor dolorum optio deserunt sed, ratione quas dicta vero.",
+            image: "",
+            presentations: ["30 UND"]
+          },
+          {
+            category: "Autos",
+            name: "Shampoo autos",
+            description: "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Excepturi dolor dolorum optio deserunt sed, ratione quas dicta vero.",
+            image: "",
+            presentations: ["650 ML", "Galón"]
+          },
+          {
+            category: "Autos",
+            name: "Shampoo alfombras",
+            description: "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Excepturi dolor dolorum optio deserunt sed, ratione quas dicta vero.",
+            image: "",
+            presentations: ["650 ML", "Galón"]
+          },
+          {
+            category: "Autos",
+            name: "Brillo lux autos",
+            description: "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Excepturi dolor dolorum optio deserunt sed, ratione quas dicta vero.",
+            image: "",
+            presentations: ["250 ML", "900 ML", "Galón"]
+          },
+          {
+            category: "Autos",
+            name: "Kit autos",
+            description: "New cleaner + Silicona Autos",
+            image: "",
+            presentations: ["Mix UND"]
+          },
+          {
+            category: "Hogar",
+            name: "Limpia vidrios",
+            description: "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Excepturi dolor dolorum optio deserunt sed, ratione quas dicta vero.",
+            image: "",
+            presentations: ["650 ML", "Galón"]
+          },
+          {
+            category: "Hogar",
+            name: "Limpia maderas",
+            description: "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Excepturi dolor dolorum optio deserunt sed, ratione quas dicta vero.",
+            image: "",
+            presentations: ["500 ML", "900 ML", "Galón"]
+          },
+          {
+            category: "Hogar",
+            name: "Limpia melamine",
+            description: "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Excepturi dolor dolorum optio deserunt sed, ratione quas dicta vero.",
+            image: "",
+            presentations: ["500 ML", "900 ML", "Galón"]
+          },
+          {
+            category: "Hogar",
+            name: "Paños siliconados para maderas",
+            description: "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Excepturi dolor dolorum optio deserunt sed, ratione quas dicta vero.",
+            image: "",
+            presentations: ["30 UND"]
+          },
+          {
+            category: "Hogar",
+            name: "Paños siliconados para cueros",
+            description: "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Excepturi dolor dolorum optio deserunt sed, ratione quas dicta vero.",
+            image: "",
+            presentations: ["30 UND"]
+          },
+          {
+            category: "Hogar",
+            name: "Brillo lux hogar",
+            description: "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Excepturi dolor dolorum optio deserunt sed, ratione quas dicta vero.",
+            image: "",
+            presentations: ["250 ML", "900 ML", "Galón"]
+          },
+          {
+            category: "Hogar",
+            name: "Kita grasa",
+            description: "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Excepturi dolor dolorum optio deserunt sed, ratione quas dicta vero.",
+            image: "",
+            presentations: ["650 ML", "Galón"]
+          },
+          {
+            category: "Calzado",
+            name: "New Cleaner",
+            description: "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Excepturi dolor dolorum optio deserunt sed, ratione quas dicta vero.",
+            image: "",
+            presentations: ["200 GR"]
+          },
+          {
+            category: "Calzado",
+            name: "Silicona cueros",
+            description: "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Excepturi dolor dolorum optio deserunt sed, ratione quas dicta vero.",
+            image: "",
+            presentations: ["250 ML", "Galón"]
+          },
+          {
+            category: "Calzado",
+            name: "Gamus cleaner",
+            description: "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Excepturi dolor dolorum optio deserunt sed, ratione quas dicta vero.",
+            image: "",
+            presentations: ["250 ML", "Galón"]
+          },
+          {
+            category: "Calzado",
+            name: "Paños new cleaner",
+            description: "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Excepturi dolor dolorum optio deserunt sed, ratione quas dicta vero.",
+            image: "",
+            presentations: ["30 UND"]
+          },
+          {
+            category: "Calzado",
+            name: "Kit calzado",
+            description: "New cleaner + Silicona cueros",
+            image: "",
+            presentations: ["Mix UND"]
+          }
+        ]
+      };
+
+      selectAllCheckboxes = isSelected => {
+        Object.keys(this.state.checkboxes).forEach(checkbox => {
+          // BONUS: Can you explain why we pass updater function to setState instead of an object?
+          this.setState(prevState => ({
+            checkboxes: {
+              ...prevState.checkboxes,
+              [checkbox]: isSelected
+            }
+          }));
+        });
+      };
+
+      handleCheckboxChange = changeEvent => {
+        const { name } = changeEvent.target;
+        var inputs = document.getElementsByTagName('input')
+        let checked = false
+        for (let input of inputs) {
+          if ( input.type === "checkbox" && input.checked ) {
+            checked = true
+            break
+          }
+        }
+
+        if ( !checked ) {
+          this.setState({
+            selectedOption: "all"
+          });
+        } else {
+          this.setState({
+            selectedOption: "none"
+          });
+        }
+
+
+        this.setState(prevState => ({
+          checkboxes: {
+            ...prevState.checkboxes,
+            [name]: !prevState.checkboxes[name]
+          }
+        }));
+
+      };
+
+      createCheckbox = option => (
+        <Checkbox
+          label={option}
+          isSelected={this.state.checkboxes[option]}
+          onCheckboxChange={this.handleCheckboxChange}
+          key={option}
+        />
+      );
+
+      createCheckboxes = () => OPTIONS.map(this.createCheckbox);
+
+      handleOptionChange = changeEvent => {
+        this.setState({
+          selectedOption: changeEvent.target.value
+        });
+        this.selectAllCheckboxes(false);
+      };
+
+      render() {
+        return (
+          <div className="wrapper">
+            <div className="categories">
+              <div className="category-item">
+                <label htmlFor="all">Todas</label>
+                <input
+                  type="radio"
+                  name="radio"
+                  value="all"
+                  id="all"
+                  checked={this.state.selectedOption === "all"}
+                  onChange={this.handleOptionChange}
+                />
+              </div>
+              {this.createCheckboxes()}
+            </div>
+            <Products state={this.state} />
+          </div>
+        );
+      }
+    }
+
+    ReactDOM.render(<App />, document.getElementById('products'))
+  </script>
 </body>
 </html>
